@@ -127,3 +127,23 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Security and credentials
+*.key
+*.pem
+*.cert
+*.crt
+*_rsa
+*_rsa.pub
+.env.*
+!.env.example
+config/secrets.yml
+config/credentials.yml.enc

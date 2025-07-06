@@ -5,7 +5,7 @@
 # Import Flask, render_template, request from the flask pramework package
 from flask import Flask, render_template, request
 # Import the sentiment_analyzer function from the package created
-from sentiment_analysis import sentiment_analyzer
+from final_project.emotion_detection import sentiment_analyzer
 
 #Initiate the flask app : TODO
 

@@ -3,13 +3,25 @@ Configuration for Watson Sentiment Analysis API endpoints
 """
 
 import os
-from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+# Try to load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # If dotenv is not installed, try to load .env manually
+    import os.path
+    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    if os.path.exists(env_path):
+        with open(env_path) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ[key] = value
 
-# Choose which endpoint to use
-USE_PUBLIC_WATSON = os.environ.get('USE_PUBLIC_WATSON', 'false').lower() == 'true'
+# Always use public Watson API
+USE_PUBLIC_WATSON = True
 
 # Coursera internal endpoint (only works within Coursera network)
 COURSERA_ENDPOINT = {
@@ -38,27 +50,27 @@ PUBLIC_WATSON_ENDPOINT = {
     "payload_format": lambda text: {
         "text": text,
         "features": {
-            "sentiment": {
+            "emotion": {
                 "document": True
             }
         }
     }
 }
 
-# Select active endpoint
-ACTIVE_ENDPOINT = PUBLIC_WATSON_ENDPOINT if USE_PUBLIC_WATSON else COURSERA_ENDPOINT
+# Always use public Watson endpoint
+ACTIVE_ENDPOINT = PUBLIC_WATSON_ENDPOINT
 
 def get_watson_config():
     """Get the active Watson API configuration"""
     return ACTIVE_ENDPOINT
 
-def format_watson_response(response_text, is_public_api=False):
+def format_watson_response(response_text, is_public_api=True):
     """
     Format Watson response to a consistent format
     
     Args:
         response_text: Raw response from Watson API
-        is_public_api: Whether the response is from public Watson API
+        is_public_api: Whether the response is from public Watson API (default: True)
         
     Returns:
         Formatted response dict
@@ -68,8 +80,9 @@ def format_watson_response(response_text, is_public_api=False):
     try:
         response_data = json.loads(response_text)
         
-        if is_public_api and 'sentiment' in response_data:
-            # Convert public API format to Coursera format
+        # Always treat as public API since we're only using public Watson now
+        if 'sentiment' in response_data:
+            # Convert public API format to consistent format
             sentiment = response_data['sentiment']['document']
             return json.dumps({
                 "documentSentiment": {

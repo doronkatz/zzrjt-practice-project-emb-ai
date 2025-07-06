@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Example usage of the sentiment analyzer with automatic fallback"""
+"""Example usage of the sentiment analyzer"""
 
-from sentiment_analysis import analyze_sentiment_with_fallback
+from final_project import sentiment_analyzer
 import json
 
 def main():
@@ -13,8 +13,8 @@ def main():
     print(f"Analyzing text: '{text}'")
     print("-" * 60)
     
-    # Analyze sentiment (will use mock if Watson is unavailable)
-    result = analyze_sentiment_with_fallback(text)
+    # Analyze sentiment using Watson NLP
+    result = sentiment_analyzer(text)
     
     # Parse and display the result
     try:
@@ -31,9 +31,6 @@ def main():
                 score = result_dict["documentSentiment"]["score"]
                 print(f"\nSentiment: {sentiment}")
                 print(f"Score: {score}")
-                
-                if result_dict.get("mock"):
-                    print("\nNote: Using mock analyzer (Watson service unavailable)")
     
     except json.JSONDecodeError:
         print(f"Raw response: {result}")
